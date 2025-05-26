@@ -1,5 +1,7 @@
 substitutions:
   _TAG: 'v${BUILD_ID}'
+  _CLUSTER: 'cloud-app-cluster'    # Added as substitution
+  _ZONE: 'europe-west1-b'         # Added as substitution
 
 steps:
   - name: 'gradle:7.5.1-jdk17'
@@ -17,21 +19,9 @@ steps:
     args:
       - '-c'
       - |
-        # Get cluster credentials
-        gcloud container clusters get-credentials ${CLOUDSDK_CONTAINER_CLUSTER} \
-          --zone ${CLOUDSDK_COMPUTE_ZONE}
-        
-        # Debug: Print current context
-        kubectl config current-context
-        
-        # Replace tag and apply
-        TAG="v${BUILD_ID}"
-        sed -i "s#\${_TAG}#${TAG}#g" deployment.yaml
-        cat deployment.yaml  # Debug output
-        kubectl apply -f deployment.yaml
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
+        gcloud container clusters get-credentials ${_CLUSTER} --zone ${_ZONE}
+        sed "s#\${_TAG}#${_TAG}#g" deployment.yaml > temp.yaml
+        kubectl apply -f temp.yaml
 
 images:
   - 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}'
