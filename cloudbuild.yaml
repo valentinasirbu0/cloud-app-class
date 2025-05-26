@@ -13,11 +13,15 @@ steps:
     args: [ 'push', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}' ]
 
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', 'deployment.yaml']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        sed "s/\${_TAG}/v${BUILD_ID}/g" deployment.yaml | kubectl apply -f -
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
-      - '_TAG=v${BUILD_ID}'
+
 
 
 images:
