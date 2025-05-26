@@ -21,7 +21,7 @@ steps:
 
 
 images:
-  - 'gcr.io/cloud-app-vale2025/cloud-app:latest'
+  - 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}'
 
 options:
   logging: CLOUD_LOGGING_ONLY
