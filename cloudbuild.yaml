@@ -1,19 +1,24 @@
+substitutions:
+  _TAG: 'v${BUILD_ID}'
+
 steps:
   - name: 'gradle:7.5.1-jdk17'
     entrypoint: './gradlew'
     args: ['bootJar']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:latest', '.']
+    args: [ 'build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}', '.' ]
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/cloud-app-vale2025/cloud-app:latest']
+    args: [ 'push', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}' ]
 
   - name: 'gcr.io/cloud-builders/kubectl'
     args: ['apply', '-f', 'deployment.yaml']
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
+      - '_TAG=v${BUILD_ID}'
+
 
 images:
   - 'gcr.io/cloud-app-vale2025/cloud-app:latest'
