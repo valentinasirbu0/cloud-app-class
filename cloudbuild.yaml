@@ -4,10 +4,10 @@ steps:
     args: ['bootJar']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/cloud-app-vale2025 /cloud-app:latest', '.']
+    args: ['build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:latest', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/cloud-app-vale2025 /cloud-app:latest']
+    args: ['push', 'gcr.io/cloud-app-vale2025/cloud-app:latest']
 
   - name: 'gcr.io/cloud-builders/kubectl'
     args: ['apply', '-f', 'k8s/deployment.yaml']
@@ -17,10 +17,10 @@ steps:
       - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
 
 images:
-  - 'gcr.io/cloud-app-vale2025 /cloud-app:latest'
+  - 'gcr.io/cloud-app-vale2025/cloud-app:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
 # Optional: only include this if you use a custom service account for deployments
-# serviceAccount: projects/cloud-app-vale2025 /serviceAccounts/YOUR_SA@cloud-app-vale2025 .iam.gserviceaccount.com
+# serviceAccount: projects/cloud-app-vale2025/serviceAccounts/YOUR_SA@cloud-app-vale2025.iam.gserviceaccount.com
