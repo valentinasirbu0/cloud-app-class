@@ -1,13 +1,13 @@
 steps:
-  - name: 'gcr.io/cloud-builders/gradle'
-    dir: '.'
-    args: ['build']
+  - name: 'gradle:7.5.1-jdk17'
+    entrypoint: './gradlew'
+    args: ['bootJar']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/your-project-id/cloud-app:latest', '.']
+    args: ['build', '-t', 'gcr.io/YOUR_PROJECT_ID/cloud-app:latest', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/your-project-id/cloud-app:latest']
+    args: ['push', 'gcr.io/YOUR_PROJECT_ID/cloud-app:latest']
 
   - name: 'gcr.io/cloud-builders/kubectl'
     args: ['apply', '-f', 'k8s/deployment.yaml']
@@ -16,7 +16,11 @@ steps:
       - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
 
-serviceAccount: projects/your-project-id/serviceAccounts/your-cloud-build-sa@your-project-id.iam.gserviceaccount.com
+images:
+  - 'gcr.io/YOUR_PROJECT_ID/cloud-app:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+# Optional: only include this if you use a custom service account for deployments
+# serviceAccount: projects/YOUR_PROJECT_ID/serviceAccounts/YOUR_SA@YOUR_PROJECT_ID.iam.gserviceaccount.com
