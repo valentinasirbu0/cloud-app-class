@@ -1,30 +1,25 @@
-substitutions:
-  _TAG: 'v${BUILD_ID}'
-  _CLUSTER: 'cloud-app-cluster'    # Added as substitution
-  _ZONE: 'europe-west1-b'         # Added as substitution
-
 steps:
   - name: 'gradle:7.5.1-jdk17'
     entrypoint: './gradlew'
     args: ['bootJar']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}', '.' ]
+    args: ['build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:latest', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}' ]
+    args: ['push', 'gcr.io/cloud-app-vale2025/cloud-app:latest']
 
   - name: 'gcr.io/cloud-builders/kubectl'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud container clusters get-credentials ${_CLUSTER} --zone ${_ZONE}
-        sed "s#\${_TAG}#${_TAG}#g" deployment.yaml > temp.yaml
-        kubectl apply -f temp.yaml
+    args: ['apply', '-f', 'deployment.yaml']
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
 
 images:
-  - 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}'
+  - 'gcr.io/cloud-app-vale2025/cloud-app:latest'
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+# Optional: only include this if you use a custom service account for deployments
+# serviceAccount: projects/cloud-app-vale2025/serviceAccounts/YOUR_SA@cloud-app-vale2025.iam.gserviceaccount.com

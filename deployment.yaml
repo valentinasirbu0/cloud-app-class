@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: cloud-app
-        image: gcr.io/cloud-app-vale2025/cloud-app:${_TAG}
+        image: gcr.io/cloud-app-vale2025/cloud-app:latest
         ports:
         - containerPort: 8080
         resources:
