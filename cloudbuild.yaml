@@ -7,28 +7,20 @@ steps:
     args: ['bootJar']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}', '.' ]
+    args: ['build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:v${BUILD_ID}', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}' ]
+    args: ['push', 'gcr.io/cloud-app-vale2025/cloud-app:v${BUILD_ID}']
 
   - name: 'gcr.io/cloud-builders/kubectl'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        sed "s/\${_TAG}/v${BUILD_ID}/g" deployment.yaml | kubectl apply -f -
+        sed "s|\${_TAG}|v${BUILD_ID}|g" deployment.yaml | kubectl apply -f -
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
       - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
 
-
-
 images:
-  - 'gcr.io/cloud-app-vale2025/cloud-app:${_TAG}'
-
-options:
-  logging: CLOUD_LOGGING_ONLY
-
-# Optional: only include this if you use a custom service account for deployments
-# serviceAccount: projects/cloud-app-vale2025/serviceAccounts/YOUR_SA@cloud-app-vale2025.iam.gserviceaccount.com
+  - 'gcr.io/cloud-app-vale2025/cloud-app:v${BUILD_ID}'
