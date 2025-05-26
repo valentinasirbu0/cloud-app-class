@@ -1,8 +1,14 @@
 steps:
+  - name: 'gcr.io/cloud-builders/gradle'
+    dir: '.'
+    args: ['build']
+
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/your-project-id/cloud-app:latest', '.']
+
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/your-project-id/cloud-app:latest']
+
   - name: 'gcr.io/cloud-builders/kubectl'
     args: ['apply', '-f', 'k8s/deployment.yaml']
     env:
