@@ -1,34 +1,16 @@
 steps:
-# 1. Build Docker image
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/cloud-app:latest', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/your-project-id/cloud-app:latest', '.']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/your-project-id/cloud-app:latest']
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'k8s/deployment.yaml']
+    env:
+      - 'CLOUDSDK_COMPUTE_REGION=europe-west1'
+      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
 
-# 2. Push Docker image to Google Container Registry
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/cloud-app:latest']
+serviceAccount: projects/your-project-id/serviceAccounts/your-cloud-build-sa@your-project-id.iam.gserviceaccount.com
 
-# 3. Get GKE cluster credentials
-- name: 'gcr.io/cloud-builders/gcloud'
-  args:
-    - 'container'
-    - 'clusters'
-    - 'get-credentials'
-    - 'cloud-app-cluster'
-    - '--zone'
-    - 'europe-west1-b'
-
-# 4. Deploy to GKE (apply Kubernetes manifests)
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-    - 'apply'
-    - '-f'
-    - 'deployment.yaml'
-
-# Optional: you can apply service and hpa yaml files similarly
-# - name: 'gcr.io/cloud-builders/kubectl'
-#   args: ['apply', '-f', 'k8s/service.yaml']
-# - name: 'gcr.io/cloud-builders/kubectl'
-#   args: ['apply', '-f', 'k8s/hpa.yaml']
-
-images:
-  - 'gcr.io/$PROJECT_ID/cloud-app:latest'
+options:
+  logging: CLOUD_LOGGING_ONLY
