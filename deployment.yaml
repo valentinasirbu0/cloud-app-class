@@ -33,12 +33,6 @@ spec:
           - name: SPRING_DATASOURCE_URL
             value: "jdbc:postgresql://postgres-release-postgresql:5432/mydatabase"
           - name: SPRING_DATASOURCE_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: postgres-release-postgresql
-                key: postgresql-username
+            value: "myuser"
           - name: SPRING_DATASOURCE_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: postgres-release-postgresql
-                key: postgresql-password
+            value: "mypassword"
