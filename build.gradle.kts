@@ -5,8 +5,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
-    // Keep the Kotlin JPA plugin for entity processing
-    kotlin("plugin.jpa") version "1.9.23" // Ensure this matches your Kotlin version
 }
 
 group = "md.utm"
@@ -22,13 +20,6 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // Keep Spring Boot Starter Data JPA
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-
-    // REMOVED: runtimeOnly("com.h2database:h2")
-    // ADDED: PostgreSQL database driver
-    runtimeOnly("org.postgresql:postgresql")
-
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

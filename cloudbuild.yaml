@@ -1,30 +1,19 @@
 steps:
-# 1. Build the Spring Boot application using Gradle
-# Use a more recent Gradle image that includes JDK 17
-- name: 'gradle:8.7-jdk17-jammy' # Or 'gradle:latest' or 'gradle:jdk17' if you prefer
-  entrypoint: 'gradle'
-  args: ['clean', 'build', '-x', 'test'] # 'clean build' generates the JAR. '-x test' skips tests for faster builds
-  id: 'Build Spring Boot JAR'
+  - name: 'gradle:7.5.1-jdk17'
+    entrypoint: './gradlew'
+    args: ['bootJar']
 
-# 2. Build the Docker image
-# This step relies on your Dockerfile being in the root of the project
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:latest', '.']
-  id: 'Build Docker Image'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/cloud-app-vale2025/cloud-app:latest', '.']
 
-# 3. Push the Docker image to Google Artifact Registry (or Container Registry)
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/cloud-app-vale2025/cloud-app:latest']
-  id: 'Push Image'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/cloud-app-vale2025/cloud-app:latest']
 
-# 4. Deploy the Docker image to Google Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  args: ['gcloud', 'run', 'deploy', 'cloud-app-service', # Replace 'cloud-app-service' with your desired Cloud Run service name
-         '--image', 'gcr.io/cloud-app-vale2025/cloud-app:latest',
-         '--region', 'europe-west1', # IMPORTANT: Replace with your actual Cloud Run region (e.g., us-central1)
-         '--platform', 'managed',
-         '--allow-unauthenticated'] # Remove this flag if you want to secure your service
-  id: 'Deploy to Cloud Run'
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'deployment.yaml']
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=cloud-app-cluster'
 
 images:
   - 'gcr.io/cloud-app-vale2025/cloud-app:latest'
