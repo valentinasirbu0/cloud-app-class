@@ -6,9 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import jakarta.persistence.Entity // Changed from javax.persistence.Entity
+import jakarta.persistence.Id     // Changed from javax.persistence.Id
+import jakarta.persistence.Table  // Changed from javax.persistence.Table
+import jakarta.persistence.GeneratedValue // You'll likely need this for auto-generating IDs
+import jakarta.persistence.GenerationType // And this for ID generation strategy
 
 @SpringBootApplication
 class CloudAppApplication
@@ -21,7 +23,8 @@ fun main(args: Array<String>) {
 @Table(name = "users")
 data class User(
     @Id
-    val id: Long,
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Recommended for auto-incrementing IDs
+    val id: Long? = null, // Make ID nullable for new entities before they get an ID
     val name: String
 )
 
